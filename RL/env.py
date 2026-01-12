@@ -264,6 +264,7 @@ class MulticastEnv:
         :param graph: networkx的图
         :return: self.graph
         """
+        aa=123
         self.graph = graph
         return self.graph
 
