@@ -264,6 +264,7 @@ class MulticastEnv:
         :param graph: networkx的图
         :return: self.graph
         """
+
         self.graph = graph
         return self.graph
 
@@ -272,7 +273,7 @@ class MulticastEnv:
             修改并返回 nodes
         :return: self.nodes
         """
-
+        a12=13
         self.nodes = sorted(self.graph.nodes)
         return self.nodes
 
