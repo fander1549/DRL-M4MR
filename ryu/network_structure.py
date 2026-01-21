@@ -32,6 +32,7 @@ class NetworkStructure(app_manager.RyuApp):
     def __init__(self, *args, **kwargs):
         super(NetworkStructure, self).__init__(*args, **kwargs)
         self.start_time = time.time()
+        #模块名称指定为discovery，方便其他模块通过lookup_service_brick获取该模块实例
         self.name = 'discovery'
         # self._snoop = kwargs['igmplib']
         # self._snoop.set_querier_mode(dpid=str_to_dpid('000000000000001e'), server_port=2)
@@ -43,11 +44,11 @@ class NetworkStructure(app_manager.RyuApp):
         self.pre_graph = nx.Graph()
 
         self.access_table = {}  # {(dpid, in_port): (src_ip, src_mac)}
-        self.switch_all_ports_table = {}  # {dpid: {port_no, ...}}
-        self.all_switches_dpid = {}  # dict_key[dpid]
-        self.switch_port_table = {}  # {dpid: {port, ...}
-        self.link_port_table = {}  # {(src.dpid, dst.dpid): (src.port_no, dst.port_no)}
-        self.not_use_ports = {}  # {dpid: {port, ...}}  交换机之间没有用来连接的port
+        self.switch_all_ports_table = {}  # 交换机端口全集{dpid: {port_no, ...}}
+        self.all_switches_dpid = {}  # 交换机集合 dict_key[dpid]
+        self.switch_port_table = {}  # 交换机互连接口集合  {dpid: {port, ...}
+        self.link_port_table = {}  # 交换机间链路端口映射 {(src.dpid, dst.dpid): (src.port_no, dst.port_no)}
+        self.not_use_ports = {}  #非交换机互连接口，其实就是“主机接入口集合”，用于判断某个 PacketIn 是否来自主机。  {dpid: {port, ...}}  交换机之间没有用来连接的port
         self.shortest_path_table = {}  # {(src.dpid, dst.dpid): [path]}
         self.arp_table = {}  # {(dpid, eth_src, arp_dst_ip): in_port}
         self.arp_src_dst_ip_table = {}
@@ -114,6 +115,23 @@ class NetworkStructure(app_manager.RyuApp):
     # Flow mod and Table miss
     @set_ev_cls(ofp_event.EventOFPSwitchFeatures, CONFIG_DISPATCHER)
     def switch_features_handler(self, ev):
+    
+        """
+        区别在“用途、匹配条件、动作、优先级”：
+        1) switch_features_handler 里下发的是 table‑miss 流表
+        用途：兜底规则，保证未知包上送控制器。
+        match：OFPMatch()（匹配所有包）。
+        actions：输出到控制器（OFPP_CONTROLLER）。
+        优先级：0（最低，只在没有其他规则时触发）。
+        超时：默认无超时（一直存在）。
+      
+        2) shortest文件中 send_flow_mod 下发的是业务转发流表
+        用途：具体转发规则（单播/组播路径）。
+        match：带端口 + IP 的精确匹配（in_port, eth_type, ipv4_src, ipv4_dst）。
+        actions：输出到下一跳端口（dst_port）。
+        优先级：1（比 table‑miss 高）。
+        超时：idle_timeout=15, hard_timeout=60（临时流表）。
+        """
         datapath = ev.msg.datapath
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
@@ -137,6 +155,12 @@ class NetworkStructure(app_manager.RyuApp):
     # Packet In
     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
     def _packet_in_handler(self, ev):
+        """ 
+        本项目多个 Ryu 应用模块，每个模块各自关注不同目的的 PacketIn：
+        network_structure.py：主要用 PacketIn 里的 ARP 学主机接入位置（access_table）。
+        shortest_path_forwarding.py：用 PacketIn 里的 IPv4 触发计算路径并下发转发流表。
+        """
+
         # print("discovery---> discovery PacketIn")
         msg = ev.msg
         datapath = msg.datapath
