@@ -70,8 +70,8 @@ def plot_tm_mean(mean_list, x_label='time', y_label='mean_traffic', title='mean'
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Generate traffic matrices")
     parser.add_argument("--seed", default=2020, help="random seed")
-    parser.add_argument("--num_nodes", default=14, help="number of nodes of network")
-    parser.add_argument("--num_tms", default=24, help="total number of matrices")
+    parser.add_argument("--num_nodes", type=int, default=14, help="number of nodes of network")
+    parser.add_argument("--num_tms", type=int, default=24, help="total number of matrices")
     # 1.55 * 1e3 * 0.75
     parser.add_argument("--mean_traffic", default=5 * 10 ** 3 * 0.75, help="mean volume of traffic (Kbps)")
     parser.add_argument("--pm_ratio", default=1.5, help="peak-to-mean ratio")
@@ -83,8 +83,8 @@ if __name__ == '__main__':
     parser.add_argument("--communicate_ratio", default=0.7, help="percentage of nodes to communicate")
     args = parser.parse_args()
 
-    # set_seed()
-    # generate_tm()
+    set_seed()
+    generate_tm()
 
     mean_time_tm = np.load(MiniConfig.MEAN_TIME_TM_PATH)
     plot_tm_mean(mean_time_tm)
