@@ -1,0 +1,2 @@
+network_structure.py 里在交换机连接时下发了 table‑miss 流表（上送控制器）。
+shortest_path_forwarding.py 里会根据路径/组播树下发 实际转发流表（具体在它的 PacketIn 处理和流表下发逻辑里）。
