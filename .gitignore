@@ -1,1 +1,8 @@
 mininet/__pycache__/mini_config.cpython-39.pyc
+mininet/figure/mean_communicate_tm.pdf
+mininet/figure/mean_time_tm.pdf
+mininet/tm_statistic/communicate_tm.npy
+mininet/tm_statistic/mean_communicate_tm.npy
+mininet/tm_statistic/traffic_matrix.npy
+mininet/tm_statistic/mean_time_tm.npy
+mininet/figure/mean.pdf
