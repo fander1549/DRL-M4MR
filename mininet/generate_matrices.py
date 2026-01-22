@@ -17,7 +17,9 @@ def set_seed():
 
 
 def generate_tm():
-    tm = modulated_gravity_tm(args.num_nodes, args.num_tms, args.mean_traffic, args.pm_ratio, args.t_ratio,
+    num_nodes = int(args.num_nodes)
+    num_tms = int(args.num_tms)
+    tm = modulated_gravity_tm(num_nodes, num_tms, args.mean_traffic, args.pm_ratio, args.t_ratio,
                               args.diurnal_freq, args.spatial_variance, args.temporal_variance)
 
     mean_time_tm = []
