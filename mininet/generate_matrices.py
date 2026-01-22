@@ -10,7 +10,7 @@ import numpy as np
 import numpy.random
 from tmgen.models import modulated_gravity_tm
 import matplotlib.pyplot as plt
-
+from mini_config import MiniConfig
 
 def set_seed():
     numpy.random.seed(args.seed)
@@ -86,5 +86,5 @@ if __name__ == '__main__':
     # set_seed()
     # generate_tm()
 
-    mean_time_tm = np.load(r"D:\WorkSpace\Hello_Myself\Hello_Multicast\RLMulticastProject\mininet\tm_statistic\tm_statistic\mean_time_tm.npy")
+    mean_time_tm = np.load(MiniConfig.MEAN_TIME_TM_PATH)
     plot_tm_mean(mean_time_tm)
