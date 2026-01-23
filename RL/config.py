@@ -87,8 +87,8 @@ class Config:
             
 
     else:
-        xml_topology_path = Path(r'/home/dell/RLMulticastProject/mininet/topologies/topology2.xml')
-        pkl_weight_path = Path(r"/home/dell/RLMulticastProject/ryu/pickle/2022-03-11-19-40-21")
+        xml_topology_path = Path(r'/home/hs/DRL-M4MR/mininet/topologies/topology2.xml')
+        pkl_weight_path = Path(r"/home/hs/DRL-M4MR/ryu/pickle/2022-03-11-19-40-21")
 
     # nodes
     start_node = 12
